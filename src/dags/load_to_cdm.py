@@ -37,7 +37,7 @@ def execute_sql():
 dag = DAG(
     'execute_sql_and_load_data',
     default_args=default_args,
-    description='DAG to execute SQL query and load data into Vertica',
+    description='load_data_to_cdm',
     schedule_interval='@daily',
 )
 
