@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
 from airflow.operators.dummy_operator import DummyOperator
-from vertica_python import connect
+from airflow.hooks.vertica_hook import VerticaHook
 
 default_args = {
     'owner': 'anisimovp',
@@ -13,23 +13,17 @@ default_args = {
 
 def execute_sql():
     # Чтение SQL-запроса из файла
-    with open('/lessons/dags/load_data_global_metrics.sql', 'r') as file:
+    with open('/lessons/load_data_global_metrics.sql', 'r') as file:
         sql_query = file.read()
+
+    # Получение соединения с Vertica из Airflow connections
+    vertica_conn_id = 'vertica_conn'  # Идентификатор подключения для Vertica в Airflow UI
+    vertica_hook = VerticaHook(vertica_conn_id)
+    vertica_conn = vertica_hook.get_conn()
     
-    # Подключение к Vertica и выполнение SQL-запроса
-    vertica_conn = {
-        'host': '51.250.75.20',
-        'port': '5433',
-        'user': 'ANISIMOVP95YANDEXRU',
-        'password': 'ORggzQNxMpoi6fk',
-        'database': 'dwh',
-        'autocommit': True
-    }
-    
-    with connect(**vertica_conn) as conn:
-        cur = conn.cursor()
+    # Выполнение SQL-запроса в Vertica
+    with vertica_conn.cursor() as cur:
         cur.execute(sql_query)
-        cur.close()
 
 
 dag = DAG(

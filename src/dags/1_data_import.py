@@ -6,15 +6,15 @@ from airflow.hooks.vertica_hook import VerticaHook
 import logging
 
 def load_currency_data():
-    # Retrieve connections from Airflow connections
-    postgres_conn_id = 'postgres_conn'  # Connection ID for PostgreSQL in Airflow UI
-    vertica_conn_id = 'vertica_conn'  # Connection ID for Vertica in Airflow UI
+    # Получаем соединения из подключений Airflow
+    postgres_conn_id = 'postgres_conn'  # Идентификатор подключения для PostgreSQL в Airflow UI
+    vertica_conn_id = 'vertica_conn'  # Идентификатор подключения для Vertica в Airflow UI
 
-    # Create PostgreSQL hook
+    # Создаем PostgreSQL hook
     postgres_hook = PostgresHook(postgres_conn_id)
     postgres_conn = postgres_hook.get_conn()
 
-    # Create Vertica hook
+    # Создаем Vertica hook
     vertica_hook = VerticaHook(vertica_conn_id)
     vertica_conn = vertica_hook.get_conn()
 
@@ -51,16 +51,16 @@ def load_currency_data():
         logging.error(f"Error occurred while loading data from currency table: {str(e)}")
 
 
-def load_transactions_data():
-    # Retrieve connections from Airflow connections
-    postgres_conn_id = 'postgres_conn'  # Connection ID for PostgreSQL in Airflow UI
-    vertica_conn_id = 'vertica_conn'  # Connection ID for Vertica in Airflow UI
+def load_currency_data():
+    # Получаем соединения из подключений Airflow
+    postgres_conn_id = 'postgres_conn'  # Идентификатор подключения для PostgreSQL в Airflow UI
+    vertica_conn_id = 'vertica_conn'  # Идентификатор подключения для Vertica в Airflow UI
 
-    # Create PostgreSQL hook
+    # Создаем PostgreSQL hook
     postgres_hook = PostgresHook(postgres_conn_id)
     postgres_conn = postgres_hook.get_conn()
 
-    # Create Vertica hook
+    # Создаем Vertica hook
     vertica_hook = VerticaHook(vertica_conn_id)
     vertica_conn = vertica_hook.get_conn()
     
