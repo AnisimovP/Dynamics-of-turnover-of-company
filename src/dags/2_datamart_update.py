@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
+from airflow.operators.dummy_operator import DummyOperator
 from vertica_python import connect
 
 default_args = {
@@ -12,10 +13,10 @@ default_args = {
 
 def execute_sql():
     # Чтение SQL-запроса из файла
-    with open('/lessons/load_data_global_metrics.sql', 'r') as file:
+    with open('/lessons/dags/load_data_global_metrics.sql', 'r') as file:
         sql_query = file.read()
     
-    # Подключение к Vertica
+    # Подключение к Vertica и выполнение SQL-запроса
     vertica_conn = {
         'host': '51.250.75.20',
         'port': '5433',
@@ -24,14 +25,11 @@ def execute_sql():
         'database': 'dwh',
         'autocommit': True
     }
-    conn = connect(**vertica_conn)
     
-    # Выполнение SQL-запроса
-    cur = conn.cursor()
-    cur.execute(sql_query)
-    cur.close()
-    conn.commit()
-    conn.close()
+    with connect(**vertica_conn) as conn:
+        cur = conn.cursor()
+        cur.execute(sql_query)
+        cur.close()
 
 
 dag = DAG(
@@ -47,7 +45,11 @@ execute_sql_task = PythonOperator(
     dag=dag,
 )
 
+# Добавьте фиктивный оператор в качестве последней задачи, чтобы отметить конец DAG
+end_task = DummyOperator(
+    task_id='end_task',
+    dag=dag,
+)
 
-execute_sql_task 
-
-
+# Определение зависимости задач
+execute_sql_task >> end_task
